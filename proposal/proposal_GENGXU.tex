@@ -1,0 +1,110 @@
+\documentclass[11pt]{article}
+\usepackage{fullpage}
+\usepackage{setspace}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{listings}
+\usepackage{color}
+
+\definecolor{dkgreen}{rgb}{0,0.6,0}
+\definecolor{gray}{rgb}{0.5,0.5,0.5}
+\definecolor{mauve}{rgb}{0.58,0,0.82}
+
+\lstloadlanguages{Matlab} %use listings with Matlab for Pseudocode
+\lstnewenvironment{PseudoCode}[1][]
+{\lstset{language=Matlab,basicstyle=\scriptsize, keywordstyle=\color{darkblue},numbers=left,xleftmargin=.04\textwidth,#1}}
+{}
+
+
+\title{%
+  Randomized Algorithm for shape pattern counting on GraphX \\
+  \large independent project proposal}
+\author{Supervisor: Prof.Ke YI, Student: GENG XU(20405672)}
+
+\begin{document}
+
+\maketitle
+
+\vspace*{-0.8cm}
+
+\section*{Introduction and Scope}
+
+\item Counting the number of specific shapes is a fundamental problem in graph analysis. Intuitively, such an algorithm has a time complexity of $O(n^{m})$ where m is the number of edges in the shape. This project aims to solve the problem by two approaches:
+
+\begin{itemize}
+\item Instead of exact counting, a Monte Carlo algorithm based on random sampling is designed to provide a theoretically reliable solution.
+\item GraphX takes the advantage of Spark and provide convenient programming interfaces for deploying such an algorithm on computing clusters.
+\end{itemize}
+\item This project will implement such an algorithm on GraphX (scala-Spark). Experiment and analysis will be carried out for coming up with performance measurements, including accuracy and speed up ratio.
+
+\section*{Algorithm Design}
+\textbf{input:} graph, number of edges in pattern, sample rate \\
+\textbf{output:} number of pattern 
+
+\begin{PseudoCode}
+randCount(graph, n, rate):
+	vertexSet<-graph.vertices.sample(rate)
+	degreeGraph<-graph.mapEdges(e<-src.degree)
+	for(1 to n):
+		vertexSet.foreach{v=>nextStep=random pick 1 neighbor and validate}
+		vertexSet.aggregateMsg(only if triplet.dstId==nextStep			
+			p=p*1/edge.attr
+			sendMsg: (pathStartId,path,p,#ofiteration,nextStep),
+			rcvMsg: (a,b)=>a++b
+		)
+		updateGraph
+	for end
+	graph.vertices.filter(v=>v.vertexId==msg.pathStartId).sum(1/p)
+end
+
+validate:
+	!path.contains(picked) || (#ofiteration==n && picked==pathStartId)
+	
+\end{PseudoCode}
+
+
+\section*{Measurements and Experiment}
+
+\item Some experiments are designed to evaluate the performance of the algorithm:\\
+
+
+\begin{tabular}{|c|c|c|c|c|}
+\hline
+\hline
+Group No. & algorithm & Mode & sample rate & Measurement\\
+\hline
+\hline
+1 & Exact counting & cluster & 1 & time, counts  \\
+\hline
+2 & Random counting & local & 1 & time  \\
+\hline
+3 & Random counting & cluster & 1 & time, counts  \\
+\hline
+4 & Random counting & cluster & varying & time, counts  \\
+\hline
+\end{tabular}
+
+\begin{itemize}
+\item Speed up ratio due to randomization: Group 1 vs Group 3
+\item Speed up ratio due to parallel computing: Group 2 vs Group 3
+\item sample rate - speed up/accuracy: Group 1 vs Group 3,4
+\end{itemize}
+
+\section*{Deliverables}
+\item This is a 3-credit bearing project supervised by Prof. Ke YI. The final deliverable will be runnable Spark jar and report for performance details.\\
+
+\item Code repository: https://github.com/PhilipGeng/RandCounter\\
+
+\section*{Reference}
+\item F. Li, B. Wu, K. Yi, and Z. Zhao, “Wander Join,” Proceedings of the 2016 International Conference on Management of Data - SIGMOD '16, 2016. \\
+
+\item R. S. Xin, J. E. Gonzalez, M. J. Franklin, and I. Stoica, “GraphX,” First International Workshop on Graph Data Management Experiences and Systems - GRADES '13, 2013.\\
+
+
+
+\end{document}
+
+
+
+
+
