@@ -9,7 +9,7 @@ import org.apache.spark.graphx.{GraphLoader, PartitionStrategy}
 object ShapeCounter {
   def main(args:Array[String]): Unit ={
     val sc = new SparkContext("local","shapeCounter")
-    val graph = GraphLoader.edgeListFile(sc, "src/shape.txt", true)
+    val graph = GraphLoader.edgeListFile(sc, "src/0.edges", true)
       .partitionBy(PartitionStrategy.RandomVertexCut)
     // Find the triangle count for each vertex
     val triCounts = graph.triangleCount().vertices
